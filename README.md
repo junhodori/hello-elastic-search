@@ -101,8 +101,11 @@ docker-compose up
 
 #### 1) 서울 열린데이터 - 공공 와이파이 오픈 API 키 발급
 * 링크 : http://data.seoul.go.kr/dataList/OA-20883/S/1/datasetView.do
+* 파일 : [docker-compose.yml](/docker-compose.yml)
+  * 오픈 API 키 입력 방법
+    * docker-compose.yml > services > python > environment > OPEN_API_KEY 값입력
 
-#### 2) 파이썬 수집기 개발
+#### 2) 파이썬 클라이언트 개발
 * 오픈 API 데이터 수집
     * 파일 : [wifi_api.py](/python_vfs/wifi_api.py)
 * 엘라스틱서치 저장 및 검색
@@ -120,6 +123,6 @@ docker-compose up
 python /app/wifi_app.py
 ```
 
-#### 3) 키바나 분석 시각화
+#### 5) 키바나 분석 시각화
 * 링크 : http://localhost:5601
   * 서울시 공공와이파이 위치 시각화하기

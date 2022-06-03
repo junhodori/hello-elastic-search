@@ -77,6 +77,8 @@ services:
       /app/seoul_wifi_index_create.sh &&
       pip install elasticsearch &&
       python /app/wifi_app.py'
+    environment:
+      OPEN_API_KEY: ""
     links:
       - elasticsearch      
     depends_on:
