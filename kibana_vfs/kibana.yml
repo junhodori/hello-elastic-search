@@ -1,0 +1,18 @@
+#
+# ** THIS IS AN AUTO-GENERATED FILE **
+#
+
+# Default Kibana configuration for docker target
+server.host: "0.0.0.0"
+server.shutdownTimeout: "5s"
+elasticsearch.hosts: [ "http://elasticsearch:9200" ]
+monitoring.ui.container.elasticsearch.enabled: true
+xpack.maps.showMapVisualizationTypes: true
+map.regionmap:
+    layers:
+      - name: "ADONG"
+        url: "http://localhost/seoul_adm.geojson"
+        attribution: "INRAP"
+        fields:
+            - name: "ADM_DR_NM"
+              description: "ADM NAME"

@@ -1,0 +1,83 @@
+version: '3.0'
+services:
+  elasticsearch:
+    image: elasticsearch:7.17.4
+    container_name: elasticsearch
+    # 엘라스틱서치는 root 권한으로 실행 안되도록 되어있으므로 elasticsearch 권한으로 실행
+    user: elasticsearch
+    ports:
+      - 9200:9200
+    environment:
+      - discovery.type=single-node
+    # analysis-nori 분석기 설치
+    # docker-entrypoint.sh 을 이용해 엘라스틱서치 실행
+    command: bash -c './bin/elasticsearch-plugin install analysis-nori &&
+      /usr/local/bin/docker-entrypoint.sh'
+  logstash:
+    image: logstash:7.17.4
+    container_name: logstash
+    user: root
+    volumes:
+      # 로그스태시 input 대상 파일
+      - ./logstash_vfs/seoul_pop.txt:/usr/share/logstash/config/seoul_pop.txt    
+      # 로그스태시 파이프라인 설정 파일
+      - ./logstash_vfs/logstash-spop.conf:/usr/share/logstash/config/logstash-spop.conf
+      # 인덱스 매핑 생성 쉘스크립트
+      - ./logstash_vfs/seoul_ingu_index_create.sh:/usr/share/logstash/seoul_ingu_index_create.sh
+    # CURL 설치
+    # seoul_ingu_index_create.sh 이용해 인덱스 생성
+    # 로그스태시 파이프라인 실행
+    command: bash -c 'apt-get update &&
+        apt-get install -y curl &&
+        chmod 755 ./seoul_ingu_index_create.sh &&
+        sleep 10 &&
+        ./seoul_ingu_index_create.sh &&
+        ./bin/logstash -f ./config/logstash-spop.conf'
+    links:
+      - elasticsearch
+    depends_on:
+      - elasticsearch
+  nginx:
+    image: nginx:stable
+    container_name: nginx
+    ports:
+      - 80:80
+    volumes:
+      # CORS (교차 출처 리소스 공유) 설정 -> 키바나에서 접근 가능
+      - ./nginx_vfs/default.conf:/etc/nginx/conf.d/default.conf
+      # GeoJSON 파일 웹서버에 올리기 -> 키바나에서 데이터 사용
+      - ./nginx_vfs/seoul_adm.geojson:/usr/share/nginx/html/seoul_adm.geojson
+  kibana:
+    image: kibana:7.17.4
+    container_name: kibana
+    # 키바나 설정 파일
+    volumes:
+      - ./kibana_vfs/kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - 5601:5601
+    links:
+      - elasticsearch
+      - nginx
+    depends_on:
+      - elasticsearch
+      - nginx
+  python:
+    image: python:3.8-slim
+    container_name: python
+    volumes:
+      - ./python_vfs:/app
+    # CURL 설치
+    # seoul_wifi_index_create.sh 이용해 인덱스 생성
+    # elasticsearch 패키지 설치
+    # 파이썬 스크립트 실행
+    command: bash -c 'apt-get update &&
+      apt-get install -y curl &&
+      chmod 755 /app/seoul_wifi_index_create.sh &&
+      sleep 10 &&
+      /app/seoul_wifi_index_create.sh &&
+      pip install elasticsearch &&
+      python /app/wifi_app.py'
+    links:
+      - elasticsearch      
+    depends_on:
+      - elasticsearch
