@@ -53,8 +53,6 @@ docker-compose up
 
 ## 1. Flow A1
 
-<br>
-
 #### 1) 서울 열린데이터 - 서울시 주민등록인구 통계 다운로드
 * 링크 : https://data.seoul.go.kr/dataList/10043/S/2/datasetView.do
 * 파일 : [seoul_pop.txt](/logstash_vfs/seoul_pop.txt)
@@ -73,8 +71,6 @@ docker-compose up
 <br>
 
 ## 2. Flow A2
-
-<br>
 
 #### 1) 국가공간정보포털 - 행정동 경계 지리 정보 다운로드
 * 링크 : http://data.nsdi.go.kr/dataset/20171206ds00001
@@ -102,8 +98,6 @@ docker-compose up
 <br>
 
 ## 3. Flow B
-
-<br>
 
 #### 1) 서울 열린데이터 - 공공 와이파이 오픈 API 키 발급
 * 링크 : http://data.seoul.go.kr/dataList/OA-20883/S/1/datasetView.do
